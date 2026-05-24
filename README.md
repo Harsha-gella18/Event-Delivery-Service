@@ -1,4 +1,4 @@
-# Webhook Delivery Engine
+# Event Delivery Service
 
 A Node.js backend that ingests events, delivers them to customer webhook URLs via HTTP POST, and retries failed deliveries on a fixed schedule — all without any external queue library.
 
