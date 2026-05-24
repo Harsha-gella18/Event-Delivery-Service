@@ -1,0 +1,17 @@
+{
+  "name": "webhook-delivery-backend",
+  "version": "1.0.0",
+  "description": "Webhook Delivery Engine Assessment - SDE",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "receiver": "node receiver.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "express": "^4.21.2"
+  }
+}

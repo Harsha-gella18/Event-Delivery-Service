@@ -27,7 +27,8 @@ async function processEvent(event) {
     httpStatus = result.http_status;
     success = result.success;
   } catch (err) {
-    log(`Delivery error for event ${event.id}: ${err.message}`);
+    const detail = err.code || err.message || 'network error';
+    log(`Delivery error for event ${event.id}: ${detail}`);
     success = false;
   }
 
@@ -72,14 +73,23 @@ async function processEvent(event) {
   }
 }
 
-async function poll() {
-  const dueEvents = db.getDueEvents();
+let pollRunning = false;
 
-  for (const event of dueEvents) {
-    processEvent(event).catch((err) => {
-      log(`Unexpected error processing event ${event.id}: ${err.message}`);
-      processing.delete(event.id);
-    });
+async function poll() {
+  if (pollRunning) return;
+  pollRunning = true;
+
+  try {
+    const dueEvents = db.getDueEvents();
+    if (dueEvents.length === 0) return;
+
+    // Process one event per tick so the HTTP API stays responsive under load.
+    const event = dueEvents[0];
+    await processEvent(event);
+  } catch (err) {
+    log(`Unexpected error during poll: ${err.message}`);
+  } finally {
+    pollRunning = false;
   }
 }
 
